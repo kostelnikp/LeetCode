@@ -1,3 +1,8 @@
+/**
+ * @param {string} s
+ * @return {number}
+ */
+
 let romanToInt = function (s) {
     const romanSymbols = {
         'I': 1,
