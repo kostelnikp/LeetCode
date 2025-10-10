@@ -1,3 +1,8 @@
+/**
+ * @param {string[]} strs
+ * @return {string}
+ */
+
 let longestCommonPrefix = function(strs) {
     let sorted = strs.sort();
     let prefix = "";

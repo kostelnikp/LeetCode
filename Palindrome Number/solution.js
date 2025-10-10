@@ -1,3 +1,8 @@
+/**
+ * @param {number} x
+ * @return {boolean}
+ */
+
 let isPalindrome = function(x) {
     x = x.toString();
     let leftPointer = 0;
