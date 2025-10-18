@@ -1,0 +1,37 @@
+name: Update LeetCode Stats in README
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Count solved problems
+        id: count
+        run: |
+          EASY=$(find Easy -type f | wc -l 2>/dev/null || echo 0)
+          MEDIUM=$(find Medium -type f | wc -l 2>/dev/null || echo 0)
+          HARD=$(find Hard -type f | wc -l 2>/dev/null || echo 0)
+          echo "EASY=$EASY" >> $GITHUB_ENV
+          echo "MEDIUM=$MEDIUM" >> $GITHUB_ENV
+          echo "HARD=$HARD" >> $GITHUB_ENV
+
+      - name: Update README
+        run: |
+          sed -i "s/\(<!--easy-->\)[0-9]*/\1${EASY}/" README.md
+          sed -i "s/\(<!--medium-->\)[0-9]*/\1${MEDIUM}/" README.md
+          sed -i "s/\(<!--hard-->\)[0-9]*/\1${HARD}/" README.md
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "actions@github.com"
+          git add README.md
+          git diff --quiet && echo "No changes to commit" || (git commit -m "Update solved problem count" && git push)
