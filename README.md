@@ -6,9 +6,9 @@ This repository contains my solutions to problems from the LeetCode platform. Ea
 
 
 ## LeetCode Progress
-- Easy: 
-- Medium: 
-- Hard: 
+- Easy: 29
+- Medium: 0
+- Hard: 0
 
 ##  Folder Structure
 
