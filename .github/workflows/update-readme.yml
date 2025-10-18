@@ -2,36 +2,71 @@ name: Update LeetCode Stats in README
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]    
+
+permissions:
+  contents: write
 
 jobs:
-  update:
+  update-readme:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true   
+
+      - name: Ensure README markers exist (for debugging)
+        run: |
+          grep -q "<!--easy-->" README.md || echo "Marker <!--easy--> missing in README.md" >&2 || true
+          # táto kontrola je len informativna, action nebude failovat kvôli nej
 
       - name: Count solved problems
-        id: count
+        id: counts
         run: |
-          EASY=$(find Easy -type f | wc -l 2>/dev/null || echo 0)
-          MEDIUM=$(find Medium -type f | wc -l 2>/dev/null || echo 0)
-          HARD=$(find Hard -type f | wc -l 2>/dev/null || echo 0)
+          # bezpečne spočíta súbory, ak priečinok neexistuje vráti 0
+          count_dir() {
+            dir="$1"
+            if [ -d "$dir" ]; then
+              # ignoruj .git a skryté priečinky, spočítaj len bežné súbory
+              find "$dir" -type f ! -path "*/.git/*" | wc -l
+            else
+              echo 0
+            fi
+          }
+
+          EASY=$(count_dir "Easy")
+          MEDIUM=$(count_dir "Medium")
+          HARD=$(count_dir "Hard")
+          TOTAL=$((EASY + MEDIUM + HARD))
+
           echo "EASY=$EASY" >> $GITHUB_ENV
           echo "MEDIUM=$MEDIUM" >> $GITHUB_ENV
           echo "HARD=$HARD" >> $GITHUB_ENV
+          echo "TOTAL=$TOTAL" >> $GITHUB_ENV
 
-      - name: Update README
+          echo "Counts: Easy=$EASY Medium=$MEDIUM Hard=$HARD Total=$TOTAL"
+
+      - name: Update README markers
         run: |
-          sed -i "s/\(<!--easy-->\)[0-9]*/\1${EASY}/" README.md
-          sed -i "s/\(<!--medium-->\)[0-9]*/\1${MEDIUM}/" README.md
-          sed -i "s/\(<!--hard-->\)[0-9]*/\1${HARD}/" README.md
+          # pouzivame perl pre bezpecnejsiu nahrazku (kompatibilnejsie s macOS/linux)
+          perl -0777 -pe "s/(<!--easy-->)[0-9]+/\$1${EASY}/s" -i README.md
+          perl -0777 -pe "s/(<!--medium-->)[0-9]+/\$1${MEDIUM}/s" -i README.md
+          perl -0777 -pe "s/(<!--hard-->)[0-9]+/\$1${HARD}/s" -i README.md
+          # optionalne pridame total, ak mas marker <!--total-->
+          if grep -q '<!--total-->' README.md; then
+            perl -0777 -pe "s/(<!--total-->)[0-9]+/\$1${TOTAL}/s" -i README.md
+          fi
 
-      - name: Commit and push if changed
+      - name: Commit and push if README changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "actions@github.com"
           git add README.md
-          git diff --quiet && echo "No changes to commit" || (git commit -m "Update solved problem count" && git push)
+          if git diff --staged --quiet; then
+            echo "No README changes to commit"
+          else
+            git commit -m "chore: update LeetCode counts (Easy:${EASY} Medium:${MEDIUM} Hard:${HARD})"
+            git push
+          fi
