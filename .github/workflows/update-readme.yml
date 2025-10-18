@@ -23,7 +23,7 @@ jobs:
           count_dir() {
             dir="$1"
             if [ -d "$dir" ]; then
-              find "$dir" -type f ! -path "*/.git/*" | wc -l
+              find "$dir" -type f -name "*.js" ! -path "*/.git/*" ! -path "*/.ipynb_checkpoints/*" | wc -l
             else
               echo 0
             fi
@@ -46,6 +46,8 @@ jobs:
           sed -i -E "s/^- Easy:.*/- Easy: ${EASY}/" README.md
           sed -i -E "s/^- Medium:.*/- Medium: ${MEDIUM}/" README.md
           sed -i -E "s/^- Hard:.*/- Hard: ${HARD}/" README.md
+          sed -i -E "s/^- Total:.*/- Total: ${TOTAL}/" README.md
+
 
       - name: Commit and push if changed
         run: |
