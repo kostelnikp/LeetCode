@@ -6,7 +6,7 @@ This repository contains my solutions to problems from the LeetCode platform. Ea
 
 
 ## LeetCode Progress
-- Easy: 29
+- Easy: 31
 - Medium: 0
 - Hard: 0
 
