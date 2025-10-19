@@ -7,10 +7,10 @@ This repository contains my solutions to problems from the LeetCode platform. Ea
 
 ## LeetCode Progress
 - Easy: 17
-- Medium: 0
+- Medium: 1
 - Hard: 0
 ______________
-- Total: 17
+- Total: 18
 
 ##  Folder Structure
 
