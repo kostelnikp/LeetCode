@@ -6,11 +6,11 @@ This repository contains my solutions to problems from the LeetCode platform. Ea
 
 
 ## LeetCode Progress
-- Easy: 21
+- Easy: 22
 - Medium: 1
 - Hard: 0
 ______________
-- Total: 22
+- Total: 23
 
 ##  Folder Structure
 
