@@ -17,8 +17,10 @@ ______________
 Each problem has its own folder, for example:
 
 ```
-/TwoSum
-├── solution.js
-└── README.md
+/Easy
+└─ TwoSum
+  ├── solution.js
+  ├── README.md
+  └── (optional, depends on problem) images(.png, .jpg)
 ```
 
